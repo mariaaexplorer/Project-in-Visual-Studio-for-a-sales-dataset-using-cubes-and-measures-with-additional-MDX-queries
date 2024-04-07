@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{D2ABAB84-BF74-430A-B69E-9DC6D40DDA17}") = "t1", "t1\t1.dwproj", "{5968D84B-0A63-4E79-861A-7412A462E6BB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Development|Default = Development|Default
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5968D84B-0A63-4E79-861A-7412A462E6BB}.Development|Default.ActiveCfg = Development
+		{5968D84B-0A63-4E79-861A-7412A462E6BB}.Development|Default.Build.0 = Development
+		{5968D84B-0A63-4E79-861A-7412A462E6BB}.Development|Default.Deploy.0 = Development
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

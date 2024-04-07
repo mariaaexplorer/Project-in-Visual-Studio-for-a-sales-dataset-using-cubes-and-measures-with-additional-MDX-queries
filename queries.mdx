@@ -1,0 +1,116 @@
+//1. CATE RETURURI AU FOST EFECTUATE IN anul 2009, CALCUL COUNT
+//children
+SELECT
+   [Measures].[RETURURI1 Count] ON 0,
+   [TIME].[Hierarchy].[An].&[2.009E3].Children On 1
+FROM [comenzi-retururi-view]
+
+//2. valoare comanda - cost transport, sa vezi suma totala pe an a comenzilor efectuate
+//order si non empty
+WITH 
+  MEMBER [Measures].[Profit] AS
+    [Measures].[Val com] - [Measures].[Cost Transport]
+SELECT 
+  {[Measures].[Profit]} ON COLUMNS,
+  NON EMPTY 
+    ORDER(
+      FILTER(
+        [Time].[An].Members,
+        [Time].[An].CurrentMember.MemberValue = 2007
+        OR [Time].[An].CurrentMember.MemberValue = 2008
+        OR [Time].[An].CurrentMember.MemberValue = 2009
+        OR [Time].[An].CurrentMember.MemberValue = 2010
+      ),
+      [Measures].[Profit],
+      DESC
+    ) ON ROWS
+FROM [comenzi-retururi-view]
+
+//3. Average de "nr buc com" pe fiecare an 
+
+
+WITH MEMBER [Measures].[AvgNrBucatiComanda] AS 
+ AVG(
+      FILTER(
+         [Time].[An].Members,
+         [Time].[An].CurrentMember.MemberValue = 2007
+        OR [Time].[An].CurrentMember.MemberValue = 2008
+         OR [Time].[An].CurrentMember.MemberValue = 2009
+       OR [Time].[An].CurrentMember.MemberValue = 2010
+      ),
+      [Measures].[Nr Buc Com]
+   )
+SELECT
+   [Time].[An].Members ON COLUMNS,
+  [Measures].[AvgNrBucatiComanda] ON ROWS
+FROM [comenzi-retururi-view]
+
+
+   
+
+
+//4.cantitatea de produse facturata in fiecare luna a anului 2010
+SELECT 
+  [TIME].[Hierarchy].[Luna].Members ON COLUMNS,
+  [Measures].[Cant Prod Fact] ON ROWS
+FROM 
+  [Performante_produse]
+WHERE
+  [TIME].[An].&[2.010E3]
+
+//suma vanzarilor din primele 2 trimetre si ultimele 2
+
+//maximul vanzarilor lunare pentru  fiecare categorie
+//max
+WITH MEMBER [Measures].[Max vanzari] AS 
+	MAX ([TIME].[Hierarchy].[Luna].Members,
+	 [Measures].[Val Fact] )  
+SELECT [Measures].[Max vanzari] ON 0 ,
+[Cod Produs].[Hierarchy].[Categorie Denumire].members ON 1  
+FROM [Performante_produse]
+
+        
+//media cantitatilor facturate lunare pentru fiecare categorie   
+
+//btw         
+WITH 
+  MEMBER [Measures].[Medie Vanzari Lunare] AS 
+    Avg(
+      [TIME].[An].&[2007]:[TIME].[An].&[2008],
+      ([Measures].[Cant Prod Fact])
+    )
+SELECT 
+   [Measures].[Medie Vanzari Lunare] ON 0,
+  [Cod Produs].[Hierarchy].[Categorie Denumire].Members ON 1
+FROM 
+  [Performante_produse]
+
+//non empty
+WITH 
+  MEMBER [Measures].[Medie Vanzari Lunare] AS 
+    Avg(
+      NONEMPTY(
+        [TIME].[An].&[2007]:[TIME].[An].&[2009],
+        ([Measures].[Cant Prod Fact])
+      ),
+      ([Measures].[Cant Prod Fact])
+    )
+SELECT 
+  [Measures].[Medie Vanzari Lunare] ON 0,
+  NON EMPTY [Cod Produs].[Hierarchy].[Categorie Denumire].Members ON 1
+FROM [Performanta_Produselor]
+  
+  //QUERY CU WHERE INTR-O MASURA
+  SELECT 
+NON EMPTY [TIME].[Hierarchy].[An].Members ON ROWS,
+NON EMPTY [Produse].[Hierarchy].[Categorie Denumire].Members ON COLUMNS
+FROM [comenzi-retururi-view]
+WHERE [Measures].[Val Com]
+
+
+//sau asa
+SELECT 
+NON EMPTY [TIME].[An].Children ON ROWS,
+NON EMPTY [Produse].[Categorie Denumire].Children ON COLUMNS
+FROM [comenzi-retururi-view]
+WHERE [Measures].[Val Com]
